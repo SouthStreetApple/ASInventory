@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">AS Inventory</string>
+    <string name="retrieve_database_information">Retrieve Database Information</string>
+    <string name="text_view_table_rows">null</string>
+    <string name="button_get_rows">Get Rows</string>
+    <string name="textview_enter_product_information">Enter Product Information</string>
+    <string name="edittext_enter_product_name">Enter Product Name</string>
+    <string name="edittext_enter_product_price">Enter Product Price</string>
+    <string name="edittext_enter_product_quantity">Enter Product Quantity</string>
+    <string name="edittext_enter_supplier_name">Enter Supplier Name</string>
+    <string name="edittext_enter_supplier_number">Enter Supplier Number</string>
+    <string name="button_save_data">Save Data</string>
+</resources>
