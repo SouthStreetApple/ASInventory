@@ -5,9 +5,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.asinventory.InventoryContract.Inventory;
 
@@ -26,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
     public void buttonSaveData(View view) {
         //Save the data to the database
         setDatabaseInfo();
-        //Update the database info
-        displayDatabaseInfo();
     }
 
     private void displayDatabaseInfo() {
@@ -90,45 +90,52 @@ public class MainActivity extends AppCompatActivity {
         //We will also set he EditText boxes values to "" so that the user can enter another product
         String productName;
         EditText product_name = (EditText) findViewById(R.id.text_view_product_name);
-        productName = product_name.getText().toString();
+        productName = product_name.getText().toString().trim();
         product_name.setText("");
 
         String productPrice;
         EditText product_price = (EditText) findViewById(R.id.text_view_product_price);
-        productPrice = product_price.getText().toString();
+        productPrice = product_price.getText().toString().trim();
         product_price.setText("");
 
         String productQty;
         EditText product_qty = (EditText) findViewById(R.id.text_view_product_quantity);
-        productQty = product_qty.getText().toString();
+        productQty = product_qty.getText().toString().trim();
         product_qty.setText("");
 
         String productSupplierName;
         EditText product_supplier_name = (EditText) findViewById(R.id.text_view_product_supplier_name);
-        productSupplierName = product_supplier_name.getText().toString();
+        productSupplierName = product_supplier_name.getText().toString().trim();
         product_supplier_name.setText("");
 
         String productSupplierPhoneNumber;
         EditText product_supplier_phone_number = (EditText) findViewById(R.id.text_view_product_phone_number);
-        productSupplierPhoneNumber = product_supplier_phone_number.getText().toString();
+        productSupplierPhoneNumber = product_supplier_phone_number.getText().toString().trim();
         product_supplier_phone_number.setText("");
 
-        //Now we add all these values to the ContentValues variable we made
-        values.put(Inventory.COLUMN_PRODUCT_NAME, productName);
-        //values.put(Inventory.COLUMN_PRICE,Double.valueOf(productPrice));
-        //values.put(Inventory.COLUMN_QUANTITY,Integer.valueOf(productQty));
-        values.put(Inventory.COLUMN_PRICE, productPrice);
-        values.put(Inventory.COLUMN_QUANTITY, productQty);
-        values.put(Inventory.COLUMN_SUPPLIER_NAME, productSupplierName);
-        values.put(Inventory.COLUMN_SUPPLIER_PHONE_NUMBER, productSupplierPhoneNumber);
+        if(productName.equalsIgnoreCase("") || productPrice.equalsIgnoreCase("") || productQty.equalsIgnoreCase("") || productSupplierName.equalsIgnoreCase("")) {
+            //Show toast because one of the EditText boxes is empty
+            Toast t = Toast.makeText(this,getText(R.string.toast_data_missing),Toast.LENGTH_LONG);
+            t.show();
+        } else {
+            //Now we add all these values to the ContentValues variable we made
+            values.put(Inventory.COLUMN_PRODUCT_NAME, productName);
+            values.put(Inventory.COLUMN_PRICE, Double.parseDouble(productPrice));
+            values.put(Inventory.COLUMN_QUANTITY, Integer.parseInt(productQty));
+            values.put(Inventory.COLUMN_SUPPLIER_NAME, productSupplierName);
+            values.put(Inventory.COLUMN_SUPPLIER_PHONE_NUMBER, productSupplierPhoneNumber);
 
-        //Now we have a try block to attempt to write data to the
-        try {
-            //Try to insert he data
-            db.insert(Inventory.TABLE_NAME, null, values);
-        } finally {
-            //Nothing for now...
+            //Now we have a try block to attempt to write data to the
+            try {
+                //Try to insert the data
+                db.insert(Inventory.TABLE_NAME, null, values);
+            } catch (Exception e) {
+                Log.e("INSERT_ERROR",e.getMessage().toString());
+            }
+            //Update the database info
+            displayDatabaseInfo();
         }
+
     }
 
 

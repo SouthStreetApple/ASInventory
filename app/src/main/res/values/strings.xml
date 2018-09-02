@@ -8,6 +8,7 @@
     <string name="edittext_enter_product_price">Enter Product Price</string>
     <string name="edittext_enter_product_quantity">Enter Product Quantity</string>
     <string name="edittext_enter_supplier_name">Enter Supplier Name</string>
-    <string name="edittext_enter_supplier_number">Enter Supplier Number</string>
+    <string name="edittext_enter_supplier_number">Enter Supplier Phone Number</string>
     <string name="button_save_data">Save Data</string>
+    <string name="toast_data_missing">Please fill in all fields, phone number is optional.</string>
 </resources>
