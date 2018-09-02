@@ -51,23 +51,26 @@ public class MainActivity extends AppCompatActivity {
             textViewTableRows.setText("Rows: " + cursor.getCount());
             //Display the rows in the lower text box
             //URL: https://stackoverflow.com/a/27362598/9849310
-            Integer rowCount = cursor.getCount();
-            Integer columnCount = cursor.getColumnCount();
             if (cursor.getCount() > 0) {
                 TextView textViewTableContents = (TextView) findViewById(R.id.textview_table_contents);
                 String tempTableContents = "";
                 cursor.moveToFirst();
+                //This allows us to recursively move through the rows
                 do {
                     String row_values = "";
 
                     for (int i = 0; i < cursor.getColumnCount(); i++) {
+                        //This gathers each rows column data and adds it to the row_values variable
                         row_values = row_values + " || " + cursor.getString(i);
                     }
+                    //This builds the string with a newline at the end so that it is easier to read
                     tempTableContents = tempTableContents + row_values + "\n";
                 } while (cursor.moveToNext());
+                //Sets the text of the TableContents view.
                 textViewTableContents.setText(tempTableContents);
             }
         } finally {
+            //We close our cursor so that it does not remain open.
             cursor.close();
         }
     }
