@@ -7,18 +7,73 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.asinventory.InventoryContract.Inventory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+
+
+    /**
+     * Product data variables
+     */
+    int numberOfProducts;
+    int selectedProduct;
+    ArrayList<product> products;
+
+    /**
+     *ListView variable
+     */
+    ListView productList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /**
+         * Loads the ListView into memory
+         */
+        productList = findViewById(R.id.list_view_products);
+
+        /**
+         * Allows us to show the selected song as highlighted.
+         * URL: https://stackoverflow.com/questions/5925892/how-to-highlight-row-in-listview-in-android
+         */
+        productList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        /**
+         * Set OnItemClickListener
+         * We grab the index of the ListItem that was clicked then use that to look up the song
+         * element in the songs array.
+         */
+        productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Item is selected so we should do something?
+                Toast.makeText(getApplicationContext(), products.get(i).productName, Toast.LENGTH_SHORT).show();
+                selectedProduct = i;
+            }
+        });
+
+
+
+        /**
+         * Load product data
+         */
+        numberOfProducts = getDatabaseRowCount();
+        products = new ArrayList<product>();
+
+        //Load the products
+        loadDatabaseRows();
+
     }
 
     public void buttonRowClick(View view) {
@@ -28,6 +83,124 @@ public class MainActivity extends AppCompatActivity {
     public void buttonSaveData(View view) {
         //Save the data to the database
         setDatabaseInfo();
+    }
+
+    public void editDetails(View view) {
+        //We clicked details int he listitem, let's do something here.
+        ListView listView;
+        listView = findViewById(((ListView)view.getParent()).getId());
+        int listItemIndex;
+        listItemIndex = listView.getSelectedItemPosition();
+        Toast.makeText(getApplicationContext(), "Select Item " + listItemIndex, Toast.LENGTH_SHORT).show();
+    }
+    
+
+    private int getDatabaseRowCount(){
+        /**
+         * This will retrieve the number of rows in the table
+         */
+
+        //Initiate the database
+        DbHelper mDbHelper = new DbHelper(this);
+
+        //Create OR Open a Database so we can read data from it
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        //Now let's try to select some data and display it
+        //Let's get all the rows from the DB table
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Inventory.TABLE_NAME, null);
+
+        //set the row count variable
+        int numberOfROws = cursor.getCount();
+
+        //close cursor
+        cursor.close();
+
+        return numberOfROws;
+    }
+
+    private void loadDatabaseRows() {
+        /**
+         * This code displays data base information on the screen
+         */
+
+        //Initiate the database
+        DbHelper mDbHelper = new DbHelper(this);
+
+        //Create OR Open a Database so we can read data from it
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        //Now let's try to select some data and display it
+        //Let's get all the rows from the DB table
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Inventory.TABLE_NAME, null);
+        //Try Block, in case this doesn't work we don't crash the application
+        try {
+            //Display the rows in the lower text box
+            //URL: https://stackoverflow.com/a/27362598/9849310
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                //Create variables to hold the data
+                String productIndex ="0";
+                String productName ="";
+                String productPrice = "";
+                String productQuantity = "";
+                String manufacturer = "" ;
+                String manufacturerPhoneNumber = "";
+                //This allows us to recursively move through the rows
+                do {
+                    /*Create new instance of the custom class product*/
+                    product p = new product();
+                    for (int i = 0; i < cursor.getColumnCount(); i++) {
+                        switch (i){
+                            case 0:
+                                //This is the row index
+                                productIndex = cursor.getString(i);
+                                break;
+                            case 1:
+                                //This should be the product name
+                                productName = cursor.getString(i);
+                                break;
+                            case 2:
+                                //This should be the price
+                                productPrice = cursor.getString(i);
+                                break;
+                            case 3:
+                                //This should be the quantity
+                                productQuantity = cursor.getString(i);
+                                if (productQuantity==null){
+                                    productQuantity="0";
+                                }
+                                break;
+                            case 4:
+                                //This should be the manufacturer name
+                                manufacturer = cursor.getString(i);
+                                break;
+                            case 5:
+                                //This should be the manufacturer phone number
+                                manufacturerPhoneNumber = cursor.getString(i);
+                                break;
+                            default:
+                                //Do nothing
+                        }
+                    }
+                    //Now we add the variables into the custom class product
+                    p.setProduct(Integer.parseInt(productIndex),productName,Double.parseDouble(productPrice),Integer.parseInt(productQuantity),manufacturer,manufacturerPhoneNumber);
+                    //Add the product to the ArrayList
+                    products.add(p);
+                    //Write to the Log
+                    Log.e("Adding Product: ",p.productName);
+                } while (cursor.moveToNext());
+                /**
+                 * Now we create a new custom adaptor pa, productAdaptor, using this context
+                 * and the arrayList products, then set the adaptor to the ListView
+                 */
+                productAdaptor pa = new productAdaptor(this,products);
+                productList.setAdapter(pa);
+            }
+        } finally {
+            //We close our cursor so that it does not remain open.
+            cursor.close();
+        }
     }
 
     private void displayDatabaseInfo() {

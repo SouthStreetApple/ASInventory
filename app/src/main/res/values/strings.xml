@@ -11,4 +11,11 @@
     <string name="edittext_enter_supplier_number">Enter Supplier Phone Number</string>
     <string name="button_save_data">Save Data</string>
     <string name="toast_data_missing">Please fill in all fields, phone number is optional.</string>
+    <string name="list_item_sale_button">Sale</string>
+
+    <string name="money_sign">$</string>
+    <string name="product_quantity">%1$d Available</string>
+    <string name="product_manufacturer">Manuf.:</string>
+    <string name="list_item_edit_button">Edit</string>
+    <string name="app_details_title">AS - Product Details</string>
 </resources>
