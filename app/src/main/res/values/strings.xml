@@ -18,4 +18,5 @@
     <string name="product_manufacturer">Manuf.:</string>
     <string name="list_item_edit_button">Edit</string>
     <string name="app_details_title">AS - Product Details</string>
+    <string name="delete_record">Delete Record</string>
 </resources>

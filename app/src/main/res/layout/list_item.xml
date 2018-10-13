@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Needed code to show item was highlighted -->
 <!-- URL: https://stackoverflow.com/a/17199381/9849310 -->
+
+<!--This code makes sure the list item triggers onClickListener even though we use a button-->
+<!--URL: https://stackoverflow.com/a/14372750/9849310 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/list_item"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/activatedBackgroundIndicator"
     android:orientation="vertical"
+    android:descendantFocusability="blocksDescendants"
     >
 
     <RelativeLayout

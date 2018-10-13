@@ -9,9 +9,4 @@ public class DetailsActivity extends AppCompatActivity {
         //displayDatabaseInfo();
     }
 
-    public void buttonSaveData(View view) {
-        //Save the data to the database
-        //setDatabaseInfo();
-    }
-
 }

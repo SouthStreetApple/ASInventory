@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -52,6 +53,11 @@ public class productAdaptor extends ArrayAdapter<product> {
         //Product Availability
         TextView productAvailability = (TextView) listItemView.findViewById(R.id.li_text_view_product_quantity);
         productAvailability.setText(appContext.getResources().getString(R.string.product_quantity,currentProduct.quantity));
+        //Set tag of the button to the ID of the database item!
+        //This makes it easy to retrieve the item when the button is clicked
+        //Url: https://jmsliu.com/2444/click-button-in-listview-and-get-item-position.html
+        Button itemButton = (Button) listItemView.findViewById(R.id.li_button_edit);
+        itemButton.setTag(position);
         //end
 
         //Return the listViewItem

@@ -1,6 +1,7 @@
 package com.example.android.asinventory;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
@@ -51,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * Set OnItemClickListener
-         * We grab the index of the ListItem that was clicked then use that to look up the song
-         * element in the songs array.
+         * We grab the index of the ListItem that was clicked then use that to look up the product
+         * element in the products array.
          */
         productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -62,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
                 selectedProduct = i;
             }
         });
-
-
 
         /**
          * Load product data
@@ -76,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+        refreshDatabaseRows();
+    }
+
     public void buttonRowClick(View view) {
         displayDatabaseInfo();
     }
@@ -86,14 +91,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void editDetails(View view) {
-        //We clicked details int he listitem, let's do something here.
-        ListView listView;
-        listView = findViewById(((ListView)view.getParent()).getId());
+        /**
+         * This shows a toast to illustrate the list item the button is on
+         */
         int listItemIndex;
-        listItemIndex = listView.getSelectedItemPosition();
+        listItemIndex = Integer.parseInt(view.getTag().toString());
         Toast.makeText(getApplicationContext(), "Select Item " + listItemIndex, Toast.LENGTH_SHORT).show();
+        /**
+         * Now I create an intent so that I can show the edit screen
+         */
+        Intent i = new Intent(getApplicationContext(),EditActivity.class);
+        //We pass the current list of items to the next activity
+        i.putExtra("products",products);
+        //Passing the current listItemIndex
+        i.putExtra("listItemIndex",listItemIndex);
+        startActivity(i);
     }
-    
+
 
     private int getDatabaseRowCount(){
         /**
@@ -310,8 +324,18 @@ public class MainActivity extends AppCompatActivity {
             }
             //Update the database info
             displayDatabaseInfo();
+            refreshDatabaseRows();
         }
 
+    }
+
+    private void refreshDatabaseRows(){
+        //Clear products array
+        products.clear();
+        //clear listview
+        productList.setAdapter(null);
+        //Load database into listview
+        loadDatabaseRows();
     }
 
 
