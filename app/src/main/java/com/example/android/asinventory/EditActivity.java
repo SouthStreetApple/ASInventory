@@ -1,6 +1,7 @@
 package com.example.android.asinventory;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,9 @@ public class EditActivity extends AppCompatActivity {
     //Create OR Open a Database so we can set data to it
     SQLiteDatabase db;
 
+    //Product Provider
+    ProductProvider productProvider;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +40,13 @@ public class EditActivity extends AppCompatActivity {
          */
         mDbHelper = new DbHelper(this);
         db = mDbHelper.getWritableDatabase();
+
+        /**
+         * Let's create a new product provider so we can work with this product.
+         */
+        productProvider = new ProductProvider();
+        productProvider.onCreate();
+
 
         /**
          * Load the variables from the previous screen
@@ -75,8 +86,7 @@ public class EditActivity extends AppCompatActivity {
         if (deleteDatabaseInfo()){
             //Now we kick the user our of this view, as this record no longer exists.
             db.close();
-            this.finish();
-            //super.onBackPressed();
+            super.onBackPressed();
         };
     }
     public void buttonSaveData(View view) {
@@ -139,8 +149,24 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private boolean deleteDatabaseInfo(){
-        //Delete this record in the database
-        return db.delete(Inventory.TABLE_NAME, "_id="+currentProduct.ID, null) > 0;
+        /*//Delete this record in the database
+        Boolean result;
+        result =  db.delete(Inventory.TABLE_NAME, "_id="+currentProduct.ID, null) > 0;
+
+        //Should notify that a change has been made.
+        //this.getBaseContext().getContentResolver().notifyChange(Inventory.buildLocationUri(currentProduct.ID),null); //<- ALWAYS ERRORS
+        return result;*/
+
+
+        Integer result;
+        //Log Location
+        Log.e("DATABASE LOCATION:",Inventory.buildLocationUri(currentProduct.ID).toString());
+        result = productProvider.delete(Inventory.buildLocationUri(currentProduct.ID),currentProduct.productName,null);
+        if (result > 0){
+           return true;
+        } else {
+            return false;
+        }
     }
 
 }

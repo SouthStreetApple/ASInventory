@@ -44,6 +44,7 @@ public class InventoryContract {
 
         public static final String COLUMN_SUPPLIER_PHONE_NUMBER = "supplier_phone_number";
 
+
         //Return the completed URI
         public static Uri buildLocationUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI,id);
@@ -51,6 +52,13 @@ public class InventoryContract {
 
         public static Uri buildProductName(String productName){
             return CONTENT_URI.buildUpon().appendPath(productName).build();
+        }
+
+        public static boolean isValidPrice(Double price){
+            if(price > 0){
+                return true;
+            }
+            return false;
         }
     }
 }
