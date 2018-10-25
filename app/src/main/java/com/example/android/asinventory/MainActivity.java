@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         //Now let's try to select some data and display it
         //Let's get all the rows from the DB table
         Cursor cursor = db.rawQuery("SELECT * FROM " + Inventory.TABLE_NAME, null);
+        
         //Try Block, in case this doesn't work we don't crash the application
         try {
             //Display the rows in the lower text box
