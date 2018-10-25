@@ -17,6 +17,7 @@
  */
 package com.example.android.asinventory;
 
+import android.app.Application;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -76,7 +77,8 @@ public class ProductProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        mDbHelper = new DbHelper(getContext());
+        //Create our DbHelper, make sure to use the right context
+        mDbHelper = new DbHelper(getContext()); //new DbHelper(getContext());
         return true;
     }
 

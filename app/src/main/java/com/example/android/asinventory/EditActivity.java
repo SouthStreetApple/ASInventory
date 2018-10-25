@@ -28,7 +28,7 @@ public class EditActivity extends AppCompatActivity {
     SQLiteDatabase db;
 
     //Product Provider
-    ProductProvider productProvider;
+    //ProductProvider productProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +38,11 @@ public class EditActivity extends AppCompatActivity {
         /**
          * Initialize Database
          */
-        mDbHelper = new DbHelper(this);
-        db = mDbHelper.getWritableDatabase();
+        //mDbHelper = new DbHelper(this);
+        //db = mDbHelper.getWritableDatabase();
 
-        /**
-         * Let's create a new product provider so we can work with this product.
-         */
-        productProvider = new ProductProvider();
-        productProvider.onCreate();
+        //Create product provider
+        //productProvider = new ProductProvider();
 
 
         /**
@@ -85,7 +82,7 @@ public class EditActivity extends AppCompatActivity {
         //Delete the data
         if (deleteDatabaseInfo()){
             //Now we kick the user our of this view, as this record no longer exists.
-            db.close();
+            //db.close();
             super.onBackPressed();
         };
     }
@@ -161,12 +158,11 @@ public class EditActivity extends AppCompatActivity {
         Integer result;
         //Log Location
         Log.e("DATABASE LOCATION:",Inventory.buildLocationUri(currentProduct.ID).toString());
-        result = productProvider.delete(Inventory.buildLocationUri(currentProduct.ID),currentProduct.productName,null);
+        result = getContentResolver().delete(Inventory.buildLocationUri(currentProduct.ID),currentProduct.productName,null);
         if (result > 0){
            return true;
         } else {
             return false;
         }
     }
-
 }

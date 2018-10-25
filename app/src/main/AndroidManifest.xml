@@ -26,6 +26,10 @@
             android:label="@string/app_details_title"
             android:parentActivityName=".MainActivity"
             />
+        <provider
+            android:name=".ProductProvider"
+            android:authorities="com.example.android.asinventory"
+            android:exported="false" />
     </application>
 
 </manifest>
