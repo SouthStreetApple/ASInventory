@@ -1,7 +1,10 @@
 package com.example.android.asinventory;
 
+import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,9 +22,20 @@ import com.example.android.asinventory.InventoryContract.Inventory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<Cursor>{
 
+    /**
+     * Identifier for the product data loader
+     */
+    private static final int PRODUCT_LOADER = 0;
+
+    /**
+     * Adapter for the product data loader
+     */
+    ProductCursorAdaptor productCursorAdapter;
 
     /**
      * Product data variables
@@ -52,6 +66,23 @@ public class MainActivity extends AppCompatActivity {
         productList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         /**
+         * Set an empty view for now, this will only show when the list has 0 items
+         */
+        View emptyView = findViewById(R.id.empty_view);
+        productList.setEmptyView(emptyView);
+
+        /**
+         * Let's setup the adapter now!
+         */
+        productCursorAdapter = new ProductCursorAdaptor(this,null);
+
+        /**
+         * Set the listview adapter
+         */
+        productList.setAdapter(productCursorAdapter);
+
+
+        /**
          * Set OnItemClickListener
          * We grab the index of the ListItem that was clicked then use that to look up the product
          * element in the products array.
@@ -60,20 +91,59 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Item is selected so we should do something?
-                Toast.makeText(getApplicationContext(), products.get(i).productName, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Item " + i + " Clicked!", Toast.LENGTH_SHORT).show();
                 selectedProduct = i;
+                /**
+                 * Below is where we would inflate the detail view
+                 */
+
+                /**/
             }
         });
+        /**
+         * Start the loader
+         */
+        getLoaderManager().initLoader(PRODUCT_LOADER,null,this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle){
+        /**
+         * Now we define a projection that specifies the columns from the table we are working with
+         */
+        String[] projection  = {
+                Inventory._ID,
+                Inventory.COLUMN_PRODUCT_NAME,
+                Inventory.COLUMN_PRICE,
+                Inventory.COLUMN_QUANTITY
+        };
 
         /**
-         * Load product data
+         * Return  the new cursor loader
          */
-        numberOfProducts = getDatabaseRowCount();
-        products = new ArrayList<product>();
+        return new CursorLoader(this, //Parent Activity Conext (should be)
+                Inventory.CONTENT_URI, //Provider conten URI to query
+                projection, //Columns to include in the resulting cursor
+                null, //No selection clause
+                null, //No selection arguments
+                null); //Default sort order
 
-        //Load the products
-        loadDatabaseRows();
+    }
 
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data){
+        /**
+         * This will update the ProductCursorAdapter with this new cursor
+         */
+        productCursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader){
+        /**
+         * Callback called when the data needs to be deleted
+         */
+        productCursorAdapter.swapCursor(null);
     }
 
     @Override
@@ -101,11 +171,7 @@ public class MainActivity extends AppCompatActivity {
         /**
          * Now I create an intent so that I can show the edit screen
          */
-        Intent i = new Intent(getApplicationContext(),EditActivity.class);
-        //We pass the current list of items to the next activity
-        i.putExtra("products",products);
-        //Passing the current listItemIndex
-        i.putExtra("listItemIndex",listItemIndex);
+        Intent i = new Intent(MainActivity.this,EditActivity.class);
         startActivity(i);
     }
 
@@ -211,8 +277,8 @@ public class MainActivity extends AppCompatActivity {
                  * Now we create a new custom adaptor pa, productAdaptor, using this context
                  * and the arrayList products, then set the adaptor to the ListView
                  */
-                productAdaptor pa = new productAdaptor(this,products);
-                productList.setAdapter(pa);
+                /*productAdaptor pa = new productAdaptor(this,products);
+                productList.setAdapter(pa);*/
             }
         } finally {
             //We close our cursor so that it does not remain open.
@@ -270,11 +336,11 @@ public class MainActivity extends AppCompatActivity {
          * This code sets information into the database
          */
 
-        //Initiate the database
+        /*//Initiate the database
         DbHelper mDbHelper = new DbHelper(this);
 
         //Create OR Open a Database so we can set data to it
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();*/
 
         //Now let's create the values variable
         ContentValues values = new ContentValues();
@@ -321,13 +387,14 @@ public class MainActivity extends AppCompatActivity {
             //Now we have a try block to attempt to write data to the
             try {
                 //Try to insert the data
-                db.insert(Inventory.TABLE_NAME, null, values);
+                getContentResolver().insert(Inventory.CONTENT_URI,values);
+                //db.insert(Inventory.TABLE_NAME, null, values);
             } catch (Exception e) {
                 Log.e("INSERT_ERROR",e.getMessage().toString());
             }
-            //Update the database info
+            /*//Update the database info
             displayDatabaseInfo();
-            refreshDatabaseRows();
+            refreshDatabaseRows();*/
         }
 
     }

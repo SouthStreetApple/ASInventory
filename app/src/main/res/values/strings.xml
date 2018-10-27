@@ -19,4 +19,6 @@
     <string name="list_item_edit_button">Edit</string>
     <string name="app_details_title">AS - Product Details</string>
     <string name="delete_record">Delete Record</string>
+    <string name="empty_view_textview">Looks like the Product DB is empty!</string>
+    <string name="empty_view_button">Add a product to begin!</string>
 </resources>
