@@ -71,10 +71,19 @@ public class EditActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_edit);
 
         /**
+         * Load the variables from the previous screen
+         */
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            //Load the songs array!
+            currentProductUri = Uri.parse(extras.getString("currentProductUri"));
+        }
+
+        /**
          * Now we check the intent to examine if we are editing an old pet or a new one
          */
-        Intent intent = getIntent();
-        currentProductUri = intent.getData();
+        //Intent intent = getIntent();
+        //currentProductUri = intent.getData();
 
         /**
          * Initialize a Loader to load the data into the editors
@@ -289,6 +298,5 @@ public class EditActivity extends AppCompatActivity implements
                 Log.e("INSERT_ERROR",e.getMessage().toString());
             }
         }
-
     }
 }

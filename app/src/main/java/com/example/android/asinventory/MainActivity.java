@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements
          * Now I create an intent so that I can show the edit screen
          */
         Intent i = new Intent(MainActivity.this,EditActivity.class);
+        i.putExtra("currentProductUri", Inventory.buildLocationUri(listItemIndex).toString());
         startActivity(i);
     }
 
