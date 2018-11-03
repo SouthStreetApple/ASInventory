@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.example.android.asinventory.InventoryContract.Inventory;
 
 public class DetailsActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>{
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Identifier for the product data loader
@@ -71,7 +71,7 @@ public class DetailsActivity extends AppCompatActivity implements
         /**
          * Now we check the intent to examine if we are editing an old pet or a new one
          */
-        if (currentProductUri == null){
+        if (currentProductUri == null) {
             /**
              * This is a new product.
              */
@@ -81,7 +81,7 @@ public class DetailsActivity extends AppCompatActivity implements
              * This is an existing product so let's do the following
              * Initialize a Loader to load the data into the editors
              */
-            getLoaderManager().initLoader(EXISTING_PRODUCT_LOADER,null,this);
+            getLoaderManager().initLoader(EXISTING_PRODUCT_LOADER, null, this);
         }
 
         /**
@@ -97,7 +97,7 @@ public class DetailsActivity extends AppCompatActivity implements
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle){
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         /**
          * Now we want to define a projection to get all the data for each product
          */
@@ -118,16 +118,16 @@ public class DetailsActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor){
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         /**
          * Setup a check to get out of this if the cursor is null or
          * if the table has less than one row
          */
-        if(cursor == null || cursor.getCount() < 1){
+        if (cursor == null || cursor.getCount() < 1) {
             return;
         }
 
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             /**
              * Now we're going to get the columns of the product attributes we want
              */
@@ -150,7 +150,7 @@ public class DetailsActivity extends AppCompatActivity implements
              * Here is where we update the views
              */
             productName.setText(name);
-            productPrice.setText(this.getResources().getString(R.string.money_sign,price));
+            productPrice.setText(this.getResources().getString(R.string.money_sign, price));
             productQty.setText(qty);
             productSupplierName.setText(manufName);
             productSupplierPhoneNumber.setText(manufPhone);
@@ -158,7 +158,7 @@ public class DetailsActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader){
+    public void onLoaderReset(Loader<Cursor> loader) {
         /**
          * If the loader is invalidated then we need to null the data from the fields.
          */
@@ -169,11 +169,11 @@ public class DetailsActivity extends AppCompatActivity implements
         productSupplierPhoneNumber.setText("");
     }
 
-    private void deleteProduct(){
+    private void deleteProduct() {
         /**
          * We will only run this code if it is an existing product
          */
-        if (currentProductUri != null){
+        if (currentProductUri != null) {
             /**
              * Now we will delete the row
              */
@@ -181,13 +181,13 @@ public class DetailsActivity extends AppCompatActivity implements
             /**
              * Show a message on if this removal worked
              */
-            if (rowsDeleted == 0){
-                Toast.makeText(this,"Something went wrong, product not deleted",Toast.LENGTH_LONG).show();
+            if (rowsDeleted == 0) {
+                Toast.makeText(this, "Something went wrong, product not deleted", Toast.LENGTH_LONG).show();
             } else {
                 /**
                  * The delete must have worked
                  */
-                Toast.makeText(this,"Product removed",Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Product removed", Toast.LENGTH_LONG).show();
             }
         }
         /**
@@ -196,7 +196,7 @@ public class DetailsActivity extends AppCompatActivity implements
         finish();
     }
 
-    public void buttonDeleteData(View view){
+    public void buttonDeleteData(View view) {
         /**
          * Let's create a dialog here to check that the user is sure!
          * URL: https://stackoverflow.com/a/5127506/9849310
@@ -210,11 +210,12 @@ public class DetailsActivity extends AppCompatActivity implements
                     public void onClick(DialogInterface dialog, int whichButton) {
                         //Delete the product
                         deleteProduct();
-                    }})
+                    }
+                })
                 .setNegativeButton(android.R.string.no, null).show();
     }
 
-    public void buttonReduceQty(View view){
+    public void buttonReduceQty(View view) {
         /**
          * Setting increase amount
          */
@@ -223,7 +224,7 @@ public class DetailsActivity extends AppCompatActivity implements
          * This will reduce the Qty. of product by the amount in the EditText
          */
         int qty = Integer.valueOf(productQty.getText().toString());
-        if ((qty-qtyAmountChange) >= 0 ){
+        if ((qty - qtyAmountChange) >= 0) {
             qty = qty - qtyAmountChange;
             //Now we need to update the database
             saveQtyValue(qty);
@@ -233,7 +234,7 @@ public class DetailsActivity extends AppCompatActivity implements
         }
     }
 
-    public void buttonIncreaseQty(View view){
+    public void buttonIncreaseQty(View view) {
         /**
          * Setting decrease amount
          */
@@ -248,14 +249,14 @@ public class DetailsActivity extends AppCompatActivity implements
         productQty.setText(String.valueOf(qty));
     }
 
-    public void callContact(View view){
+    public void callContact(View view) {
         Intent intent = new Intent(Intent.ACTION_DIAL);
-        String phone =  productSupplierPhoneNumber.getText().toString();
+        String phone = productSupplierPhoneNumber.getText().toString();
         intent.setData(Uri.parse("tel:" + phone));
         startActivity(intent);
     }
 
-    public void saveQtyValue(int i){
+    public void saveQtyValue(int i) {
         /**
          * Let's sell an item, but make sure that there's nothing less than zero!
          */
@@ -265,7 +266,7 @@ public class DetailsActivity extends AppCompatActivity implements
         /**
          * Get the cursor
          */
-        cursor = getContentResolver().query(currentProductUri,null,null,null,null);
+        cursor = getContentResolver().query(currentProductUri, null, null, null, null);
         /**
          * Get the current quantity
          */
@@ -275,7 +276,7 @@ public class DetailsActivity extends AppCompatActivity implements
         ContentValues values = new ContentValues();
         values = cursorRowToContentValues(cursor);
         values.put(Inventory.COLUMN_QUANTITY, qty);
-        getContentResolver().update(currentProductUri,values,Inventory._ID+"=?",new String[] {String.valueOf(cursor.getColumnIndex(Inventory.COLUMN_QUANTITY))});
+        getContentResolver().update(currentProductUri, values, Inventory._ID + "=?", new String[]{String.valueOf(cursor.getColumnIndex(Inventory.COLUMN_QUANTITY))});
 
         /**
          * Close the cursor

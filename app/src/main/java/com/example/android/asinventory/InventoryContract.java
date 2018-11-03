@@ -22,9 +22,9 @@ public class InventoryContract {
     /**
      * Now we will create the inner class which defines the table contents of the inventory database
      */
-    public static final class Inventory implements BaseColumns{
+    public static final class Inventory implements BaseColumns {
         //Setting the variables for the URI and CONTENT Types and Content ITEM Type
-        public static  final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INVENTORY).build();
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INVENTORY).build();
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INVENTORY;
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_INVENTORY;
 
@@ -33,29 +33,23 @@ public class InventoryContract {
 
         //Column Name
         public static final String _ID = "_id";
-
         public static final String COLUMN_PRODUCT_NAME = "product_name";
-
         public static final String COLUMN_PRICE = "price";
-
         public static final String COLUMN_QUANTITY = "quantity";
-
         public static final String COLUMN_SUPPLIER_NAME = "supplier_name";
-
         public static final String COLUMN_SUPPLIER_PHONE_NUMBER = "supplier_phone_number";
 
-
         //Return the completed URI
-        public static Uri buildLocationUri(long id){
-            return ContentUris.withAppendedId(CONTENT_URI,id);
+        public static Uri buildLocationUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static Uri buildProductName(String productName){
+        public static Uri buildProductName(String productName) {
             return CONTENT_URI.buildUpon().appendPath(productName).build();
         }
 
-        public static boolean isValidPrice(Double price){
-            if(price > 0){
+        public static boolean isValidPrice(Double price) {
+            if (price >= 0) {
                 return true;
             }
             return false;

@@ -17,7 +17,6 @@
  */
 package com.example.android.asinventory;
 
-import android.app.Application;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -26,24 +25,25 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.android.asinventory.InventoryContract.Inventory;
 
-
-/**
- * {@link ContentProvider} for Pets app.
- */
 public class ProductProvider extends ContentProvider {
 
-    /** Tag for the log messages */
-    public static final String LOG_TAG = ProductProvider.class.getSimpleName(); //PetProvider.class.getSimpleName();
+    /**
+     * Tag for the log messages
+     */
+    public static final String LOG_TAG = ProductProvider.class.getSimpleName();
 
-    /** URI matcher code for the content URI for the pets table */
-    private static final int PRODUCTS = 100; //PETS = 100;
+    /**
+     * URI matcher code for the content URI for the products table
+     */
+    private static final int PRODUCTS = 100;
 
-    /** URI matcher code for the content URI for a single product in the products(inventory) table */
-    private static final int PRODUCT_ID = 101; //PET_ID = 101;
+    /**
+     * URI matcher code for the content URI for a single product in the products(inventory) table
+     */
+    private static final int PRODUCT_ID = 101;
 
     /**
      * UriMatcher object to match a content URI to a corresponding code.
@@ -54,26 +54,13 @@ public class ProductProvider extends ContentProvider {
 
     // Static initializer. This is run the first time anything is called from this class.
     static {
-        // The calls to addURI() go here, for all of the content URI patterns that the provider
-        // should recognize. All paths added to the UriMatcher have a corresponding code to return
-        // when a match is found.
-
-        // The content URI of the form "content://com.example.android.pets/pets" will map to the
-        // integer code {@link #PETS}. This URI is used to provide access to MULTIPLE rows
-        //        // of the pets table.
         sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_INVENTORY, PRODUCTS);
-
-        // The content URI of the form "content://com.example.android.pets/pets/#" will map to the
-        // integer code {@link #PET_ID}. This URI is used to provide access to ONE single row
-        // of the pets table.
-        //
-        // In this case, the "#" wildcard is used where "#" can be substituted for an integer.
-        // For example, "content://com.example.android.pets/pets/3" matches, but
-        // "content://com.example.android.pets/pets" (without a number at the end) doesn't match.
         sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_INVENTORY + "/#", PRODUCT_ID);
     }
 
-    /** Database helper object */
+    /**
+     * Database helper object
+     */
     private DbHelper mDbHelper;
 
     @Override
@@ -96,26 +83,12 @@ public class ProductProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         switch (match) {
             case PRODUCTS:
-                // For the PETS code, query the pets table directly with the given
-                // projection, selection, selection arguments, and sort order. The cursor
-                // could contain multiple rows of the pets table.
                 cursor = database.query(Inventory.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
             case PRODUCT_ID:
-                // For the PET_ID code, extract out the ID from the URI.
-                // For an example URI such as "content://com.example.android.pets/pets/3",
-                // the selection will be "_id=?" and the selection argument will be a
-                // String array containing the actual ID of 3 in this case.
-                //
-                // For every "?" in the selection, we need to have an element in the selection
-                // arguments that will fill in the "?". Since we have 1 question mark in the
-                // selection, we have 1 String in the selection arguments' String array.
                 selection = Inventory._ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
-
-                // This will perform a query on the pets table where the _id equals 3 to return a
-                // Cursor containing that row of the table.
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 cursor = database.query(Inventory.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
@@ -144,7 +117,7 @@ public class ProductProvider extends ContentProvider {
     }
 
     /**
-     * Insert a pet into the database with the given content values. Return the new content URI
+     * Insert a product into the database with the given content values. Return the new content URI
      * for that specific row in the database.
      */
     private Uri insertProduct(Uri uri, ContentValues values) {
@@ -172,20 +145,20 @@ public class ProductProvider extends ContentProvider {
 
         //Check the manufacturer name
         String manufacturerName = values.getAsString(Inventory.COLUMN_SUPPLIER_NAME);
-        if (manufacturerName == null){
+        if (manufacturerName == null) {
             throw new IllegalArgumentException("Manufacturer needs a name");
         }
 
         //Check the manufacturer phone number
         String manufacturerPhoneNumber = values.getAsString(Inventory.COLUMN_SUPPLIER_PHONE_NUMBER);
-        if (manufacturerPhoneNumber == null){
+        if (manufacturerPhoneNumber == null) {
             throw new IllegalArgumentException("Manufacturer phone number needs a value");
         }
 
         // Get writeable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
-        // Insert the new pet with the given values
+        // Insert the new product with the given values
         long id = database.insert(Inventory.TABLE_NAME, null, values);
         // If the ID is -1, then the insertion failed. Log an error and return null.
         if (id == -1) {
@@ -193,7 +166,7 @@ public class ProductProvider extends ContentProvider {
             return null;
         }
 
-        // Notify all listeners that the data has changed for the pet content URI
+        // Notify all listeners that the data has changed for the product content URI
         getContext().getContentResolver().notifyChange(uri, null);
 
         // Return the new URI with the ID (of the newly inserted row) appended at the end
@@ -206,26 +179,25 @@ public class ProductProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case PRODUCTS:
-                return updatePet(uri, contentValues, selection, selectionArgs);
+                return updateProduct(uri, contentValues, selection, selectionArgs);
             case PRODUCT_ID:
-                // For the PET_ID code, extract out the ID from the URI,
+                // For the product_ID code, extract out the ID from the URI,
                 // so we know which row to update. Selection will be "_id=?" and selection
                 // arguments will be a String array containing the actual ID.
                 selection = Inventory._ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
-                return updatePet(uri, contentValues, selection, selectionArgs);
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return updateProduct(uri, contentValues, selection, selectionArgs);
             default:
                 throw new IllegalArgumentException("Update is not supported for " + uri);
         }
     }
 
     /**
-     * Update pets in the database with the given content values. Apply the changes to the rows
-     * specified in the selection and selection arguments (which could be 0 or 1 or more pets).
+     * Update products in the database with the given content values. Apply the changes to the rows
+     * specified in the selection and selection arguments (which could be 0 or 1 or more products).
      * Return the number of rows that were successfully updated.
      */
-    private int updatePet(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        // If the {@link PetEntry#COLUMN_PET_NAME} key is present,
+    private int updateProduct(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         // Check that the name is not null
         String name = values.getAsString(Inventory.COLUMN_PRODUCT_NAME);
         if (name == null) {
@@ -246,13 +218,13 @@ public class ProductProvider extends ContentProvider {
 
         //Check the manufacturer name
         String manufacturerName = values.getAsString(Inventory.COLUMN_SUPPLIER_NAME);
-        if (manufacturerName == null){
+        if (manufacturerName == null) {
             throw new IllegalArgumentException("Manufacturer needs a name");
         }
 
         //Check the manufacturer phone number
         String manufacturerPhoneNumber = values.getAsString(Inventory.COLUMN_SUPPLIER_PHONE_NUMBER);
-        if (manufacturerPhoneNumber == null){
+        if (manufacturerPhoneNumber == null) {
             throw new IllegalArgumentException("Manufacturer phone number needs a value");
         }
 
@@ -294,7 +266,7 @@ public class ProductProvider extends ContentProvider {
             case PRODUCT_ID:
                 // Delete a single row given by the ID in the URI
                 selection = Inventory._ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 rowsDeleted = database.delete(Inventory.TABLE_NAME, selection, selectionArgs);
                 break;
             default:

@@ -5,16 +5,16 @@
     tools:context=".MainActivity">
     <item
         android:id="@+id/action_add_product"
-        android:title="Add Product"
+        android:title="@string/menu_add_product"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_insert_dummy_data"
-        android:title="Insert Random Data"
+        android:title="@string/menu_insert_dummy_data"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_delete_all_entries"
-        android:title="Delete All"
+        android:title="@string/menu_delete_all"
         app:showAsAction="never" />
 </menu>

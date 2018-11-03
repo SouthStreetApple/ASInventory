@@ -6,7 +6,7 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="@dimen/layout_padding">
 
@@ -23,52 +23,51 @@
             android:id="@+id/text_view_product_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/edittext_enter_product_name"
-            android:textSize="@dimen/text_body"
-            android:focusableInTouchMode="true"
             android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="@string/edittext_enter_product_name"
             android:inputType="text"
-            />
+            android:textSize="@dimen/text_body" />
 
         <EditText
             android:id="@+id/text_view_product_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/edittext_enter_product_price"
-            android:textSize="@dimen/text_body"
-            android:focusableInTouchMode="true"
             android:focusable="true"
-            android:inputType="numberDecimal"/>
+            android:focusableInTouchMode="true"
+            android:hint="@string/edittext_enter_product_price"
+            android:inputType="numberDecimal"
+            android:textSize="@dimen/text_body" />
 
         <EditText
             android:id="@+id/text_view_product_quantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/edittext_enter_product_quantity"
-            android:textSize="@dimen/text_body"
-            android:focusableInTouchMode="true"
             android:focusable="true"
-            android:inputType="number"/>
+            android:focusableInTouchMode="true"
+            android:hint="@string/edittext_enter_product_quantity"
+            android:inputType="number"
+            android:textSize="@dimen/text_body" />
 
         <EditText
             android:id="@+id/text_view_product_supplier_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/edittext_enter_supplier_name"
-            android:textSize="@dimen/text_body"
-            android:focusableInTouchMode="true"
             android:focusable="true"
-            android:inputType="text"/>
+            android:focusableInTouchMode="true"
+            android:hint="@string/edittext_enter_supplier_name"
+            android:inputType="text"
+            android:textSize="@dimen/text_body" />
 
         <EditText
             android:id="@+id/text_view_product_phone_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="@string/edittext_enter_supplier_number"
-            android:textSize="@dimen/text_body"
-            android:focusableInTouchMode="true"
             android:focusable="true"
-            android:inputType="phone"/>
+            android:focusableInTouchMode="true"
+            android:hint="@string/edittext_enter_supplier_number"
+            android:inputType="phone"
+            android:textSize="@dimen/text_body" />
 
         <Button
             android:id="@+id/button_Save"
@@ -76,19 +75,18 @@
             android:layout_height="wrap_content"
             android:onClick="buttonSaveData"
             android:text="@string/button_save_data"
-            android:textSize="@dimen/text_body"/>
+            android:textSize="@dimen/text_body" />
 
         <Button
             android:id="@+id/button_delete"
-            android:layout_marginTop="@dimen/layout_top_margin_large"
-            android:layout_gravity="center"
-            android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/layout_top_margin_large"
+            android:gravity="center"
             android:onClick="buttonDeleteData"
             android:text="@string/delete_record"
             android:textColor="#ff0000"
-            android:textSize="@dimen/text_body"
-            />
+            android:textSize="@dimen/text_body" />
     </LinearLayout>
 </ScrollView>

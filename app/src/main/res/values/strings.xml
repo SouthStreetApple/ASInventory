@@ -23,10 +23,16 @@
     <string name="empty_view_button">Add a product to begin!</string>
     <string name="textview_product_information">Detailed Product Information</string>
     <string name="activity_details_order_from_supplier">Order from Supplier</string>
-    <string name="text_view_product_quantity">Quantity Available:</string>
-    <string name="text_view_product_quantity_increase_amount">Qty. Increase Amount:</string>
-    <string name="text_view_product_name">Product Name:</string>
-    <string name="text_view_product_price">Product Price:</string>
-    <string name="text_view_product_manuf">Manufacturer Name:</string>
-    <string name="text_view_product_manuf_phone">Manufacturer Phone:</string>
+    <string name="text_view_product_quantity">Quantity Available: </string>
+    <string name="text_view_product_quantity_increase_amount">Qty. Increase Amount: </string>
+    <string name="text_view_product_name">Product Name: </string>
+    <string name="text_view_product_price">Product Price: </string>
+    <string name="text_view_product_manuf">Manufacturer Name: </string>
+    <string name="text_view_product_manuf_phone">Manufacturer Phone: </string>
+    <string name="menu_add_product">Add Product</string>
+    <string name="menu_insert_dummy_data">Insert Dummy Data</string>
+    <string name="menu_delete_all">Delete All</string>
+    <string name="details_minus_sign">-</string>
+    <string name="details_plus_sign">+</string>
+    <string name="main_inventory_is_empty">Inventory is empty, click on the menu and select \'Add Product\'</string>
 </resources>

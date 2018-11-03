@@ -1,75 +1,66 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Needed code to show item was highlighted -->
-<!-- URL: https://stackoverflow.com/a/17199381/9849310 -->
+<?xml version="1.0" encoding="utf-8"?><!-- Needed code to show item was highlighted --><!-- URL: https://stackoverflow.com/a/17199381/9849310 -->
 
-<!--This code makes sure the list item triggers onClickListener even though we use a button-->
-<!--URL: https://stackoverflow.com/a/14372750/9849310 -->
+<!--This code makes sure the list item triggers onClickListener even though we use a button--><!--URL: https://stackoverflow.com/a/14372750/9849310 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/list_item"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/activatedBackgroundIndicator"
-    android:orientation="vertical"
     android:descendantFocusability="blocksDescendants"
-    >
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_margin="8dp"
-        >
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/li_text_view_product_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:textSize="20sp"
-            />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/li_text_view_product_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:textSize="20sp"
-            />
+            android:textSize="20sp" />
 
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_margin="8dp"
-        >
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/li_text_view_product_quantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
-            android:textSize="20sp"
-            />
+            android:layout_alignParentLeft="true"
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/li_button_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/li_button_sale"
-            android:text="@string/list_item_edit_button"
-            android:onClick="editDetails"/>
+            android:onClick="editDetails"
+            android:text="@string/list_item_edit_button" />
 
         <Button
             android:id="@+id/li_button_sale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:text="@string/list_item_sale_button"
-            android:onClick="buttonSale"/>
+            android:layout_alignParentRight="true"
+            android:onClick="buttonSale"
+            android:text="@string/list_item_sale_button" />
 
     </RelativeLayout>
 </LinearLayout>

@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.example.android.asinventory.InventoryContract.Inventory;
 
 public class EditActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>{
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Identifier for the product data loader
@@ -57,11 +57,11 @@ public class EditActivity extends AppCompatActivity implements
      * Now we will create an OnTouchListener that will tell if the user touches a view,
      * if this takes place we will assume that the user has changed the product
      */
-    private View.OnTouchListener productTouchListener = new View.OnTouchListener(){
+    private View.OnTouchListener productTouchListener = new View.OnTouchListener() {
         @Override
-        public boolean onTouch(View view, MotionEvent motionEvent){
+        public boolean onTouch(View view, MotionEvent motionEvent) {
             productHasCHanged = true;
-            return true;
+            return false;
         }
     };
 
@@ -85,9 +85,9 @@ public class EditActivity extends AppCompatActivity implements
         productHasCHanged = false;
 
         /**
-         * Now we check the intent to examine if we are editing an old pet or a new one
+         * Now we check the intent to examine if we are editing an old product or a new one
          */
-        if (currentProductUri == null){
+        if (currentProductUri == null) {
             /**
              * This is a new product.
              */
@@ -110,7 +110,7 @@ public class EditActivity extends AppCompatActivity implements
              * This is an existing product so let's do the following
              * Initialize a Loader to load the data into the editors
              */
-            getLoaderManager().initLoader(EXISTING_PRODUCT_LOADER,null,this);
+            getLoaderManager().initLoader(EXISTING_PRODUCT_LOADER, null, this);
         }
 
         /**
@@ -135,7 +135,7 @@ public class EditActivity extends AppCompatActivity implements
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle){
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         /**
          * Now we want to define a projection to get all the data for each product
          */
@@ -156,16 +156,16 @@ public class EditActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor){
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         /**
          * Setup a check to get out of this if the cursor is null or
          * if the table has less than one row
          */
-        if(cursor == null || cursor.getCount() < 1){
+        if (cursor == null || cursor.getCount() < 1) {
             return;
         }
 
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             /**
              * Now we're going to get the columns of the product attributes we want
              */
@@ -199,7 +199,7 @@ public class EditActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader){
+    public void onLoaderReset(Loader<Cursor> loader) {
         /**
          * If the loader is invalidated then we need to null the data from the fields.
          */
@@ -214,11 +214,11 @@ public class EditActivity extends AppCompatActivity implements
      * Let's handle onBackPressed now
      */
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         /**
          * If the product hasn't changed then they can go back with no problem.
          */
-        if (!productHasCHanged){
+        if (!productHasCHanged) {
             super.onBackPressed();
             return;
         } else {
@@ -246,8 +246,7 @@ public class EditActivity extends AppCompatActivity implements
      * URL: https://stackoverflow.com/a/46499387/9849310
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -263,7 +262,7 @@ public class EditActivity extends AppCompatActivity implements
     /**
      * Now we make sure the user doesn't leave without saving, or at least warn them
      */
-    private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener){
+    private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
         /**
          * Now we're going to arrange to show the user a message should they try and leave
          * without saving.
@@ -274,7 +273,7 @@ public class EditActivity extends AppCompatActivity implements
         builder.setNegativeButton("Keep Editing", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                if(dialog != null){
+                if (dialog != null) {
                     dialog.dismiss();
                 }
             }
@@ -285,14 +284,13 @@ public class EditActivity extends AppCompatActivity implements
          */
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-
     }
 
-    private void deleteProduct(){
+    private void deleteProduct() {
         /**
          * We will only run this code if it is an existing product
          */
-        if (currentProductUri != null){
+        if (currentProductUri != null) {
             /**
              * Now we will delete the row
              */
@@ -300,13 +298,13 @@ public class EditActivity extends AppCompatActivity implements
             /**
              * Show a message on if this removal worked
              */
-            if (rowsDeleted == 0){
-                Toast.makeText(this,"Something went wrong, product not deleted",Toast.LENGTH_LONG).show();
+            if (rowsDeleted == 0) {
+                Toast.makeText(this, "Something went wrong, product not deleted", Toast.LENGTH_LONG).show();
             } else {
                 /**
                  * The delete must have worked
                  */
-                Toast.makeText(this,"Product removed",Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Product removed", Toast.LENGTH_LONG).show();
             }
         }
         /**
@@ -315,7 +313,7 @@ public class EditActivity extends AppCompatActivity implements
         finish();
     }
 
-    public void buttonDeleteData(View view){
+    public void buttonDeleteData(View view) {
         deleteProduct();
     }
 
@@ -353,7 +351,7 @@ public class EditActivity extends AppCompatActivity implements
         EditText product_supplier_phone_number = (EditText) findViewById(R.id.text_view_product_phone_number);
         productSupplierPhoneNumber = product_supplier_phone_number.getText().toString().trim();
 
-        if(validateData(productName,productPrice,productQty,productSupplierName,productSupplierPhoneNumber)==false) {
+        if (validateData(productName, productPrice, productQty, productSupplierName, productSupplierPhoneNumber) == false) {
             //Return out of this if the data is not valid.
             return;
         } else {
@@ -369,15 +367,15 @@ public class EditActivity extends AppCompatActivity implements
                  * Check to see if this is a new or existing product
                  */
                 Object result;
-                if (existingProduct==true){
+                if (existingProduct == true) {
                     //This is an existing product
-                    result = getContentResolver().update(Inventory.CONTENT_URI,values,"_id="+view.getTag(),null);
+                    result = getContentResolver().update(Inventory.CONTENT_URI, values, "_id=" + view.getTag(), null);
                 } else {
                     //This is a new product
-                    result = getContentResolver().insert(Inventory.CONTENT_URI,values);
+                    result = getContentResolver().insert(Inventory.CONTENT_URI, values);
                 }
                 //If the operation fails jump out of this, return.
-                if (result == null){
+                if (result == null) {
                     return;
                 }
                 /**
@@ -385,12 +383,12 @@ public class EditActivity extends AppCompatActivity implements
                  */
                 finish();
             } catch (Exception e) {
-                Log.e("INSERT_ERROR",e.getMessage().toString());
+                Log.e("INSERT_ERROR", e.getMessage().toString());
             }
         }
     }
 
-    private boolean validateData(String productName, String productPrice, String productQuantity, String productSupplier, String productSupplierNumber){
+    private boolean validateData(String productName, String productPrice, String productQuantity, String productSupplier, String productSupplierNumber) {
         /**
          * Setup some variables to help us.
          */
@@ -399,38 +397,38 @@ public class EditActivity extends AppCompatActivity implements
         /**
          * This is where we will validate the data before sending it to the contentResolver
          */
-        if (productName==null || productName.equalsIgnoreCase("")){
+        if (productName == null || productName.equalsIgnoreCase("")) {
             toastMessage = toastMessage + "\n" + "Please enter a valid name.";
             returnResult = false;
         }
 
-        if (productPrice.isEmpty() || !isNumeric(productPrice) || Double.parseDouble(productPrice)<0 ||  productPrice == null){
+        if (productPrice.isEmpty() || !isNumeric(productPrice) || Double.parseDouble(productPrice) < 0 || productPrice == null) {
             toastMessage = toastMessage + "\n" + "Please enter a valid price.";
             returnResult = false;
         }
 
-        if (productQuantity.isEmpty()||!isNumeric(productPrice)||Integer.parseInt(productQuantity) < 0 || productQuantity == null){
+        if (productQuantity.isEmpty() || !isNumeric(productPrice) || Integer.parseInt(productQuantity) < 0 || productQuantity == null) {
             toastMessage = toastMessage + "\n" + "Please enter a valid quantity (must be greater then zero).";
             returnResult = false;
         }
 
-        if (productSupplier == null || productSupplier.equalsIgnoreCase("")){
+        if (productSupplier == null || productSupplier.equalsIgnoreCase("")) {
             toastMessage = toastMessage + "\n" + "Please enter a valid supplier name.";
             returnResult = false;
         }
 
-        if (validPhoneNumber(productSupplierNumber) == false){
+        if (validPhoneNumber(productSupplierNumber) == false) {
             toastMessage = toastMessage + "\n" + "Please enter a valid supplier phone number.";
             returnResult = false;
         }
 
-        if (returnResult == false){
+        if (returnResult == false) {
             /**
              * Give message telling user what to do to correct the product information
              * Multi line Toasts can be shown using the below method
              * URL: https://stackoverflow.com/a/43631673/9849310
              */
-            Toast t = Toast.makeText(this,toastMessage,Toast.LENGTH_LONG);
+            Toast t = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
             t.show();
             return returnResult;
         } else {
@@ -442,8 +440,7 @@ public class EditActivity extends AppCompatActivity implements
      * Will help us determine if it is a number
      * URL: https://stackoverflow.com/a/1102916/9849310
      */
-    public static boolean isNumeric(String str)
-    {
+    public static boolean isNumeric(String str) {
         return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
     }
 
@@ -451,8 +448,7 @@ public class EditActivity extends AppCompatActivity implements
      * This will return true if it looks like a valid number.
      * URL: https://stackoverflow.com/a/23675722/9849310
      */
-    public boolean validPhoneNumber(String number)
-    {
+    public boolean validPhoneNumber(String number) {
         return android.util.Patterns.PHONE.matcher(number).matches();
     }
 }

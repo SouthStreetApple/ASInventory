@@ -6,17 +6,16 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="@dimen/layout_padding"
+        android:layout_height="wrap_content"
+        android:focusable="true"
         android:focusableInTouchMode="true"
-        android:focusable="true">
+        android:orientation="vertical"
+        android:padding="@dimen/layout_padding">
 
         <!--Input data into the database-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_gravity="center"
             android:text="@string/textview_product_information"
             android:textAlignment="center"
@@ -39,7 +38,6 @@
                 android:id="@+id/text_view_product_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignRight="@id/product_name_label"
                 android:textSize="@dimen/text_body" />
         </LinearLayout>
 
@@ -59,7 +57,6 @@
                 android:id="@+id/text_view_product_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignRight="@id/product_price_label"
                 android:textSize="@dimen/text_body" />
         </LinearLayout>
 
@@ -79,7 +76,6 @@
                 android:id="@+id/text_view_product_supplier_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignRight="@id/product_manuf_label"
                 android:textSize="@dimen/text_body" />
         </LinearLayout>
 
@@ -139,22 +135,22 @@
                     android:id="@+id/edit_text_increase_amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
                     android:digits="0123456789"
+                    android:inputType="number"
                     android:textSize="@dimen/text_body" />
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="buttonReduceQty"
-                    android:text="-"
+                    android:text="@string/details_minus_sign"
                     android:textSize="@dimen/text_body" />
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="buttonIncreaseQty"
-                    android:text="+"
+                    android:text="@string/details_plus_sign"
                     android:textSize="@dimen/text_body" />
 
             </LinearLayout>
@@ -170,10 +166,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/layout_top_margin_large"
             android:layout_gravity="center"
-            android:gravity="center">
+            android:layout_marginTop="@dimen/layout_top_margin_large"
+            android:gravity="center"
+            android:orientation="vertical">
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

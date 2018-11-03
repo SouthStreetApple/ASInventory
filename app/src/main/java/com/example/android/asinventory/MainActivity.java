@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>{
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * Identifier for the product data loader
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements
     ProductCursorAdaptor productCursorAdapter;
 
     /**
-     *ListView variable
+     * ListView variable
      */
     ListView productList;
 
@@ -60,21 +60,22 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater=getMenuInflater();
-        inflater.inflate(R.menu.menu_main,menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getItemId()==R.id.action_add_product){
+        if (item.getItemId() == R.id.action_add_product) {
             addProduct();
         }
-        if (item.getItemId()==R.id.action_insert_dummy_data){
-            Toast.makeText(this, "Insert Dummy Data", Toast.LENGTH_SHORT).show();
+        if (item.getItemId() == R.id.action_insert_dummy_data) {
+            addDummyData();
         }
 
-        if (item.getItemId()==R.id.action_delete_all_entries){
+        if (item.getItemId() == R.id.action_delete_all_entries) {
             deleteAllProducts();
         }
         return super.onOptionsItemSelected(item);
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements
         /**
          * Let's setup the adapter now!
          */
-        productCursorAdapter = new ProductCursorAdaptor(this,null);
+        productCursorAdapter = new ProductCursorAdaptor(this, null);
 
         /**
          * Set the listview adapter
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements
                 int listItemIndex;
                 listItemIndex = Integer.parseInt(view.getTag().toString());
                 //launches the intent
-                Intent intent = new Intent(getApplicationContext(),DetailsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
                 intent.putExtra("currentProductUri", Inventory.buildLocationUri(listItemIndex).toString());
                 startActivity(intent);
                 /**/
@@ -147,21 +148,19 @@ public class MainActivity extends AppCompatActivity implements
         /**
          * Start the loader
          */
-        getLoaderManager().initLoader(PRODUCT_LOADER,null,this);
+        getLoaderManager().initLoader(PRODUCT_LOADER, null, this);
         /**
          * Check to see if the listview is empty
          * RegisterDataObserver idea from,
          * URL: https://stackoverflow.com/a/28823703/9849310
          */
-        productCursorAdapter.registerDataSetObserver(new DataSetObserver()
-        {
+        productCursorAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
-            public void onChanged()
-            {
+            public void onChanged() {
                 /**
                  * Is the ListView empty?
                  */
-                if (productCursorAdapter.getCount()==0){
+                if (productCursorAdapter.getCount() == 0) {
                     /**
                      * Show a TextView or something that will tell the user to add some data
                      */
@@ -175,11 +174,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle){
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         /**
          * Now we define a projection that specifies the columns from the table we are working with
          */
-        String[] projection  = {
+        String[] projection = {
                 Inventory._ID,
                 Inventory.COLUMN_PRODUCT_NAME,
                 Inventory.COLUMN_PRICE,
@@ -192,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements
          * Return  the new cursor loader
          */
         return new CursorLoader(this, //Parent Activity Conext (should be)
-                Inventory.CONTENT_URI, //Provider conten URI to query
+                Inventory.CONTENT_URI, //Provider content URI to query
                 projection, //Columns to include in the resulting cursor
                 null, //No selection clause
                 null, //No selection arguments
@@ -200,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data){
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         /**
          * This will update the ProductCursorAdapter with this new cursor
          */
@@ -208,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader){
+    public void onLoaderReset(Loader<Cursor> loader) {
         /**
          * Callback called when the data needs to be deleted
          */
@@ -220,12 +219,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onActivityReenter(resultCode, data);
     }
 
-    public void buttonSaveData(View view) {
-        //Save the data to the database
-        setDatabaseInfo();
-    }
-
-    public void buttonSale(View view){
+    public void buttonSale(View view) {
         /**
          * Let's sell an item, but make sure that there's nothing less than zero!
          */
@@ -242,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements
         /**
          * Get the cursor
          */
-        cursor = getContentResolver().query(uri,null,null,null,null);
+        cursor = getContentResolver().query(uri, null, null, null, null);
         /**
          * Get the current quantity
          */
@@ -252,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements
          * Now we determine if the quantity is 0, if it is, we do nothing.
          * If it is 1 or more we subtract one.
          */
-        if (qty == 0){
+        if (qty == 0) {
             //Do nothing
         } else {
             //Subtract one from the qty and save it.
@@ -260,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements
             ContentValues values = new ContentValues();
             values = cursorRowToContentValues(cursor);
             values.put(Inventory.COLUMN_QUANTITY, qty);
-            getContentResolver().update(uri,values,Inventory._ID+"=?",new String[] {String.valueOf(cursor.getColumnIndex(Inventory.COLUMN_QUANTITY))});
+            getContentResolver().update(uri, values, Inventory._ID + "=?", new String[]{String.valueOf(cursor.getColumnIndex(Inventory.COLUMN_QUANTITY))});
         }
         /**
          * Close the cursor
@@ -304,29 +298,38 @@ public class MainActivity extends AppCompatActivity implements
          */
         int listItemIndex;
         listItemIndex = Integer.parseInt(view.getTag().toString());
-        Toast.makeText(getApplicationContext(), "Select Item " + listItemIndex, Toast.LENGTH_SHORT).show();
         /**
          * Now I create an intent so that I can show the edit screen
          * We're going to pass the URI manually here, for some reason it would not pass
          * automatically through the intent, so we do it here with putExtra
          */
-        Intent i = new Intent(MainActivity.this,EditActivity.class);
+        Intent i = new Intent(MainActivity.this, EditActivity.class);
         i.putExtra("currentProductUri", Inventory.buildLocationUri(listItemIndex).toString());
         startActivity(i);
     }
 
-    public void addProduct(){
-        Intent i = new Intent(MainActivity.this,EditActivity.class);
+    public void addProduct() {
+        Intent i = new Intent(MainActivity.this, EditActivity.class);
         startActivity(i);
     }
 
-    public void deleteAllProducts(){
-        Integer i = getContentResolver().delete(Inventory.CONTENT_URI,null,null);
-        Toast t = Toast.makeText(this,i + " items deleted.",Toast.LENGTH_LONG);
+    public void deleteAllProducts() {
+        Integer i = getContentResolver().delete(Inventory.CONTENT_URI, null, null);
+        Toast t = Toast.makeText(this, i + " items deleted.", Toast.LENGTH_LONG);
         t.show();
     }
 
-    private void setDatabaseInfo() {
+    public void addDummyData() {
+        /**
+         * This will add some dummy products to the database
+         */
+        setDummyDatabaseInfo("Jamasic Park II", "17.95", "100", "Knoph", "555-555-5555");
+        setDummyDatabaseInfo("How to Fish: A beginners guide", "3.95", "190", "Big Outdoor", "555-555-5555");
+        setDummyDatabaseInfo("Pens to Write By", "9.00", "30", "Inktopics", "555-555-5555");
+        setDummyDatabaseInfo("Water - And Why It's Wet", "30.00", "7", "Degrassi Press", "555-555-5555");
+    }
+
+    private void setDummyDatabaseInfo(String productName, String productPrice, String productQuantity, String productSupplier, String productSupplierNumber) {
         /**
          * This code sets information into the database
          */
@@ -336,49 +339,31 @@ public class MainActivity extends AppCompatActivity implements
 
         //Now we'll retrieve the data from the users screen
         //We will also set he EditText boxes values to "" so that the user can enter another product
-        String productName;
-        EditText product_name = (EditText) findViewById(R.id.text_view_product_name);
-        productName = product_name.getText().toString().trim();
-        product_name.setText("");
 
-        String productPrice;
-        EditText product_price = (EditText) findViewById(R.id.text_view_product_price);
-        productPrice = product_price.getText().toString().trim();
-        product_price.setText("");
+        productName = productName.toString().trim();
+        productPrice = productPrice.toString().trim();
+        productQuantity = productQuantity.toString().trim();
+        productSupplier = productSupplier.toString().trim();
+        productSupplierNumber = productSupplierNumber.toString().trim();
 
-        String productQty;
-        EditText product_qty = (EditText) findViewById(R.id.text_view_product_quantity);
-        productQty = product_qty.getText().toString().trim();
-        product_qty.setText("");
-
-        String productSupplierName;
-        EditText product_supplier_name = (EditText) findViewById(R.id.text_view_product_supplier_name);
-        productSupplierName = product_supplier_name.getText().toString().trim();
-        product_supplier_name.setText("");
-
-        String productSupplierPhoneNumber;
-        EditText product_supplier_phone_number = (EditText) findViewById(R.id.text_view_product_phone_number);
-        productSupplierPhoneNumber = product_supplier_phone_number.getText().toString().trim();
-        product_supplier_phone_number.setText("");
-
-        if(productName.equalsIgnoreCase("") || productPrice.equalsIgnoreCase("") || productQty.equalsIgnoreCase("") || productSupplierName.equalsIgnoreCase("")) {
+        if (productName.equalsIgnoreCase("") || productPrice.equalsIgnoreCase("") || productQuantity.equalsIgnoreCase("") || productSupplier.equalsIgnoreCase("") || productSupplierNumber.equalsIgnoreCase("")) {
             //Show toast because one of the EditText boxes is empty
-            Toast t = Toast.makeText(this,getText(R.string.toast_data_missing),Toast.LENGTH_LONG);
+            Toast t = Toast.makeText(this, getText(R.string.toast_data_missing), Toast.LENGTH_LONG);
             t.show();
         } else {
             //Now we add all these values to the ContentValues variable we made
             values.put(Inventory.COLUMN_PRODUCT_NAME, productName);
             values.put(Inventory.COLUMN_PRICE, Double.parseDouble(productPrice));
-            values.put(Inventory.COLUMN_QUANTITY, Integer.parseInt(productQty));
-            values.put(Inventory.COLUMN_SUPPLIER_NAME, productSupplierName);
-            values.put(Inventory.COLUMN_SUPPLIER_PHONE_NUMBER, productSupplierPhoneNumber);
+            values.put(Inventory.COLUMN_QUANTITY, Integer.parseInt(productQuantity));
+            values.put(Inventory.COLUMN_SUPPLIER_NAME, productSupplier);
+            values.put(Inventory.COLUMN_SUPPLIER_PHONE_NUMBER, productSupplierNumber);
 
             //Now we have a try block to attempt to write data to the
             try {
                 //Try to insert the data
-                getContentResolver().insert(Inventory.CONTENT_URI,values);
+                getContentResolver().insert(Inventory.CONTENT_URI, values);
             } catch (Exception e) {
-                Log.e("INSERT_ERROR",e.getMessage().toString());
+                Log.e("INSERT_ERROR", e.getMessage().toString());
             }
         }
 

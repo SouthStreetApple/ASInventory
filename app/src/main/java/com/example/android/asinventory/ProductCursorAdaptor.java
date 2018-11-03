@@ -17,19 +17,19 @@ import java.util.ArrayList;
 
 public class ProductCursorAdaptor extends CursorAdapter {
 
-    public ProductCursorAdaptor(Context context, Cursor c){
-        super(context,c,0);
+    public ProductCursorAdaptor(Context context, Cursor c) {
+        super(context, c, 0);
     }
 
     @Override
-    public View newView(Context context,Cursor cursor, ViewGroup parent){
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
         //This is where we inflate our listview item
-        return LayoutInflater.from(context).inflate(R.layout.list_item,parent,false);
+        return LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
     }
 
     @NonNull
     @Override
-    public void bindView(View view,Context context, Cursor cursor){
+    public void bindView(View view, Context context, Cursor cursor) {
         /**
          * This is where we setup our product view so that it contains the right data we then return
          * the view so that it can be shown.
@@ -49,10 +49,10 @@ public class ProductCursorAdaptor extends CursorAdapter {
         productName.setText(cursor.getString(nameColumnIndex));
         //Product Price
         TextView productPrice = (TextView) view.findViewById(R.id.li_text_view_product_price);
-        productPrice.setText(context.getResources().getString(R.string.money_sign,cursor.getString(priceColumnIndex)));
+        productPrice.setText(context.getResources().getString(R.string.money_sign, cursor.getString(priceColumnIndex)));
         //Product Availability
         TextView productAvailability = (TextView) view.findViewById(R.id.li_text_view_product_quantity);
-        productAvailability.setText(context.getResources().getString(R.string.product_quantity,cursor.getString(availabilityColumnIndex)));
+        productAvailability.setText(context.getResources().getString(R.string.product_quantity, cursor.getString(availabilityColumnIndex)));
         //Set tag of the button(s) and listitem to the ID of the database item!
         //This makes it easy to retrieve the item when the button is clicked
         //Url: https://jmsliu.com/2444/click-button-in-listview-and-get-item-position.html
