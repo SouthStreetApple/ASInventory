@@ -49,15 +49,19 @@ public class ProductCursorAdaptor extends CursorAdapter {
         productName.setText(cursor.getString(nameColumnIndex));
         //Product Price
         TextView productPrice = (TextView) view.findViewById(R.id.li_text_view_product_price);
-        productPrice.setText(cursor.getString(priceColumnIndex));
+        productPrice.setText(context.getResources().getString(R.string.money_sign,cursor.getString(priceColumnIndex)));
         //Product Availability
         TextView productAvailability = (TextView) view.findViewById(R.id.li_text_view_product_quantity);
-        productAvailability.setText(cursor.getString(availabilityColumnIndex));
-        //Set tag of the button to the ID of the database item!
+        productAvailability.setText(context.getResources().getString(R.string.product_quantity,cursor.getString(availabilityColumnIndex)));
+        //Set tag of the button(s) and listitem to the ID of the database item!
         //This makes it easy to retrieve the item when the button is clicked
         //Url: https://jmsliu.com/2444/click-button-in-listview-and-get-item-position.html
-        Button itemButton = (Button) view.findViewById(R.id.li_button_edit);
-        itemButton.setTag(cursor.getString(idColumnIndex));
+        Button editButton = (Button) view.findViewById(R.id.li_button_edit);
+        editButton.setTag(cursor.getString(idColumnIndex));
+        //
+        Button saleButton = (Button) view.findViewById(R.id.li_button_sale);
+        saleButton.setTag(cursor.getString(idColumnIndex));
+        //
+        view.setTag(cursor.getString(idColumnIndex));
     }
-    
 }

@@ -26,6 +26,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.android.asinventory.InventoryContract.Inventory;
 
@@ -147,7 +148,11 @@ public class ProductProvider extends ContentProvider {
      * for that specific row in the database.
      */
     private Uri insertProduct(Uri uri, ContentValues values) {
-        // Check that the name is not null
+        /**
+         * These validation checks are SECONDARY, the primary checks are in the EditActivity
+         * class file.  However if for some reason something goes wrong between there and here, we
+         * should throw exceptions, because something is truly broken.
+         */
         String name = values.getAsString(Inventory.COLUMN_PRODUCT_NAME);
         if (name == null) {
             throw new IllegalArgumentException("The product requires a name.");

@@ -13,7 +13,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_view_empty_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Inventory is empty, click on the menu and select 'Add Product'"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:gravity="center"/>
 
             <ListView
                 android:id="@+id/list_view_products"
@@ -22,7 +32,7 @@
                 android:padding="8dp"></ListView>
         </LinearLayout>
 
-        <LinearLayout
+        <!--LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
@@ -43,10 +53,9 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="buttonRowClick"
+                android:onClick="buttonDisplayDatabaseClick"
                 android:text="@string/button_get_rows" />
 
-            <!--Input data into the database-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -86,6 +95,12 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="createProduct"
+                android:text="Create New Product" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:onClick="buttonSaveData"
                 android:text="@string/button_save_data" />
 
@@ -95,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:singleLine="false" />
 
-        </LinearLayout>
+        </LinearLayout-->
 
     </LinearLayout>
 

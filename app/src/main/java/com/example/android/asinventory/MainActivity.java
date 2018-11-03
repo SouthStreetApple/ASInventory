@@ -1,5 +1,6 @@
 package com.example.android.asinventory;
 
+import android.app.DownloadManager;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,11 +8,17 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -38,16 +45,40 @@ public class MainActivity extends AppCompatActivity implements
     ProductCursorAdaptor productCursorAdapter;
 
     /**
-     * Product data variables
-     */
-    int numberOfProducts;
-    int selectedProduct;
-    ArrayList<product> products;
-
-    /**
      *ListView variable
      */
     ListView productList;
+
+    /**
+     * TextView variable
+     */
+    TextView emptyList;
+
+    /**
+     * Setup the menu
+     * URL: https://stackoverflow.com/a/51773631/9849310
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.menu_main,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId()==R.id.action_add_product){
+            addProduct();
+        }
+        if (item.getItemId()==R.id.action_insert_dummy_data){
+            Toast.makeText(this, "Insert Dummy Data", Toast.LENGTH_SHORT).show();
+        }
+
+        if (item.getItemId()==R.id.action_delete_all_entries){
+            deleteAllProducts();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +89,11 @@ public class MainActivity extends AppCompatActivity implements
          * Loads the ListView into memory
          */
         productList = findViewById(R.id.list_view_products);
+
+        /**
+         * Load TextView into memory
+         */
+        emptyList = findViewById(R.id.text_view_empty_list);
 
         /**
          * Allows us to show the selected song as highlighted.
@@ -81,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements
          */
         productList.setAdapter(productCursorAdapter);
 
-
         /**
          * Set OnItemClickListener
          * We grab the index of the ListItem that was clicked then use that to look up the product
@@ -90,13 +125,22 @@ public class MainActivity extends AppCompatActivity implements
         productList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Item is selected so we should do something?
-                Toast.makeText(getApplicationContext(), "Item " + i + " Clicked!", Toast.LENGTH_SHORT).show();
-                selectedProduct = i;
                 /**
-                 * Below is where we would inflate the detail view
+                 * This is where we open the details view!
+                 */
+                /**
+                 * Now I create an intent so that I can show the details screen
+                 * We're going to pass the URI manually here, for some reason it would not pass
+                 * automatically through the intent, so we do it here with putExtra
                  */
 
+                //Gets the database index for the item
+                int listItemIndex;
+                listItemIndex = Integer.parseInt(view.getTag().toString());
+                //launches the intent
+                Intent intent = new Intent(getApplicationContext(),DetailsActivity.class);
+                intent.putExtra("currentProductUri", Inventory.buildLocationUri(listItemIndex).toString());
+                startActivity(intent);
                 /**/
             }
         });
@@ -104,6 +148,30 @@ public class MainActivity extends AppCompatActivity implements
          * Start the loader
          */
         getLoaderManager().initLoader(PRODUCT_LOADER,null,this);
+        /**
+         * Check to see if the listview is empty
+         * RegisterDataObserver idea from,
+         * URL: https://stackoverflow.com/a/28823703/9849310
+         */
+        productCursorAdapter.registerDataSetObserver(new DataSetObserver()
+        {
+            @Override
+            public void onChanged()
+            {
+                /**
+                 * Is the ListView empty?
+                 */
+                if (productCursorAdapter.getCount()==0){
+                    /**
+                     * Show a TextView or something that will tell the user to add some data
+                     */
+                    emptyList.setVisibility(View.VISIBLE);
+                    /**/
+                } else {
+                    emptyList.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     @Override
@@ -115,7 +183,9 @@ public class MainActivity extends AppCompatActivity implements
                 Inventory._ID,
                 Inventory.COLUMN_PRODUCT_NAME,
                 Inventory.COLUMN_PRICE,
-                Inventory.COLUMN_QUANTITY
+                Inventory.COLUMN_QUANTITY,
+                Inventory.COLUMN_SUPPLIER_NAME,
+                Inventory.COLUMN_SUPPLIER_PHONE_NUMBER
         };
 
         /**
@@ -127,7 +197,6 @@ public class MainActivity extends AppCompatActivity implements
                 null, //No selection clause
                 null, //No selection arguments
                 null); //Default sort order
-
     }
 
     @Override
@@ -149,16 +218,84 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onActivityReenter(int resultCode, Intent data) {
         super.onActivityReenter(resultCode, data);
-        refreshDatabaseRows();
-    }
-
-    public void buttonRowClick(View view) {
-        displayDatabaseInfo();
     }
 
     public void buttonSaveData(View view) {
         //Save the data to the database
         setDatabaseInfo();
+    }
+
+    public void buttonSale(View view){
+        /**
+         * Let's sell an item, but make sure that there's nothing less than zero!
+         */
+        int qty;
+        int listItemIndex;
+        String[] projection;
+        Uri uri;
+        Cursor cursor;
+        listItemIndex = Integer.parseInt(view.getTag().toString());
+        /**
+         * Build the URI
+         */
+        uri = Inventory.buildLocationUri(listItemIndex);
+        /**
+         * Get the cursor
+         */
+        cursor = getContentResolver().query(uri,null,null,null,null);
+        /**
+         * Get the current quantity
+         */
+        cursor.moveToFirst();
+        qty = cursor.getInt(cursor.getColumnIndex(Inventory.COLUMN_QUANTITY));
+        /**
+         * Now we determine if the quantity is 0, if it is, we do nothing.
+         * If it is 1 or more we subtract one.
+         */
+        if (qty == 0){
+            //Do nothing
+        } else {
+            //Subtract one from the qty and save it.
+            qty--;
+            ContentValues values = new ContentValues();
+            values = cursorRowToContentValues(cursor);
+            values.put(Inventory.COLUMN_QUANTITY, qty);
+            getContentResolver().update(uri,values,Inventory._ID+"=?",new String[] {String.valueOf(cursor.getColumnIndex(Inventory.COLUMN_QUANTITY))});
+        }
+        /**
+         * Close the cursor
+         */
+        cursor.close();
+    }
+
+    /**
+     * The below is some very useful code to get all the content values
+     * URL: https://stackoverflow.com/a/28019056/9849310
+     */
+    public static ContentValues cursorRowToContentValues(Cursor cursor) {
+        ContentValues values = new ContentValues();
+        String[] columns = cursor.getColumnNames();
+        int length = columns.length;
+        for (int i = 0; i < length; i++) {
+            switch (cursor.getType(i)) {
+                case Cursor.FIELD_TYPE_NULL:
+                    values.putNull(columns[i]);
+                    break;
+                case Cursor.FIELD_TYPE_INTEGER:
+                    values.put(columns[i], cursor.getLong(i));
+                    break;
+                case Cursor.FIELD_TYPE_FLOAT:
+                    values.put(columns[i], cursor.getDouble(i));
+                    break;
+                case Cursor.FIELD_TYPE_STRING:
+                    values.put(columns[i], cursor.getString(i));
+                    break;
+                case Cursor.FIELD_TYPE_BLOB:
+                    values.put(columns[i], cursor.getBlob(i));
+                    break;
+            }
+        }
+        return values;
     }
 
     public void editDetails(View view) {
@@ -170,178 +307,29 @@ public class MainActivity extends AppCompatActivity implements
         Toast.makeText(getApplicationContext(), "Select Item " + listItemIndex, Toast.LENGTH_SHORT).show();
         /**
          * Now I create an intent so that I can show the edit screen
+         * We're going to pass the URI manually here, for some reason it would not pass
+         * automatically through the intent, so we do it here with putExtra
          */
         Intent i = new Intent(MainActivity.this,EditActivity.class);
         i.putExtra("currentProductUri", Inventory.buildLocationUri(listItemIndex).toString());
         startActivity(i);
     }
 
-
-    private int getDatabaseRowCount(){
-        /**
-         * This will retrieve the number of rows in the table
-         */
-
-        //Initiate the database
-        DbHelper mDbHelper = new DbHelper(this);
-
-        //Create OR Open a Database so we can read data from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        //Now let's try to select some data and display it
-        //Let's get all the rows from the DB table
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Inventory.TABLE_NAME, null);
-
-        //set the row count variable
-        int numberOfROws = cursor.getCount();
-
-        //close cursor
-        cursor.close();
-
-        return numberOfROws;
+    public void addProduct(){
+        Intent i = new Intent(MainActivity.this,EditActivity.class);
+        startActivity(i);
     }
 
-    private void loadDatabaseRows() {
-        /**
-         * This code displays data base information on the screen
-         */
-
-        //Initiate the database
-        DbHelper mDbHelper = new DbHelper(this);
-
-        //Create OR Open a Database so we can read data from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        //Now let's try to select some data and display it
-        //Let's get all the rows from the DB table
-        //Cursor cursor = db.rawQuery("SELECT * FROM " + Inventory.TABLE_NAME, null);
-        Cursor cursor = getContentResolver().query(Inventory.CONTENT_URI,null,null,null,null);
-
-        //Try Block, in case this doesn't work we don't crash the application
-        try {
-            //Display the rows in the lower text box
-            //URL: https://stackoverflow.com/a/27362598/9849310
-            if (cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                //Create variables to hold the data
-                String productIndex ="0";
-                String productName ="";
-                String productPrice = "";
-                String productQuantity = "";
-                String manufacturer = "" ;
-                String manufacturerPhoneNumber = "";
-                //This allows us to recursively move through the rows
-                do {
-                    /*Create new instance of the custom class product*/
-                    product p = new product();
-                    for (int i = 0; i < cursor.getColumnCount(); i++) {
-                        switch (i){
-                            case 0:
-                                //This is the row index
-                                productIndex = cursor.getString(i);
-                                break;
-                            case 1:
-                                //This should be the product name
-                                productName = cursor.getString(i);
-                                break;
-                            case 2:
-                                //This should be the price
-                                productPrice = cursor.getString(i);
-                                break;
-                            case 3:
-                                //This should be the quantity
-                                productQuantity = cursor.getString(i);
-                                if (productQuantity==null){
-                                    productQuantity="0";
-                                }
-                                break;
-                            case 4:
-                                //This should be the manufacturer name
-                                manufacturer = cursor.getString(i);
-                                break;
-                            case 5:
-                                //This should be the manufacturer phone number
-                                manufacturerPhoneNumber = cursor.getString(i);
-                                break;
-                            default:
-                                //Do nothing
-                        }
-                    }
-                    //Now we add the variables into the custom class product
-                    p.setProduct(Integer.parseInt(productIndex),productName,Double.parseDouble(productPrice),Integer.parseInt(productQuantity),manufacturer,manufacturerPhoneNumber);
-                    //Add the product to the ArrayList
-                    products.add(p);
-                    //Write to the Log
-                    Log.e("Adding Product: ",p.productName);
-                } while (cursor.moveToNext());
-                /**
-                 * Now we create a new custom adaptor pa, productAdaptor, using this context
-                 * and the arrayList products, then set the adaptor to the ListView
-                 */
-                /*productAdaptor pa = new productAdaptor(this,products);
-                productList.setAdapter(pa);*/
-            }
-        } finally {
-            //We close our cursor so that it does not remain open.
-            cursor.close();
-        }
-    }
-
-    private void displayDatabaseInfo() {
-        /**
-         * This code displays data base information on the screen
-         */
-
-        //Initiate the database
-        DbHelper mDbHelper = new DbHelper(this);
-
-        //Create OR Open a Database so we can read data from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-        //Now let's try to select some data and display it
-        //Let's get all the rows from the DB table
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Inventory.TABLE_NAME, null);
-        //Try Block, in case this doesn't work we don't crash the application
-        try {
-            //Show number of rows
-            TextView textViewTableRows = (TextView) findViewById(R.id.text_view_table_rows);
-            textViewTableRows.setText("Rows: " + cursor.getCount());
-            //Display the rows in the lower text box
-            //URL: https://stackoverflow.com/a/27362598/9849310
-            if (cursor.getCount() > 0) {
-                TextView textViewTableContents = (TextView) findViewById(R.id.textview_table_contents);
-                String tempTableContents = "";
-                cursor.moveToFirst();
-                //This allows us to recursively move through the rows
-                do {
-                    String row_values = "";
-
-                    for (int i = 0; i < cursor.getColumnCount(); i++) {
-                        //This gathers each rows column data and adds it to the row_values variable
-                        row_values = row_values + " || " + cursor.getString(i);
-                    }
-                    //This builds the string with a newline at the end so that it is easier to read
-                    tempTableContents = tempTableContents + row_values + "\n";
-                } while (cursor.moveToNext());
-                //Sets the text of the TableContents view.
-                textViewTableContents.setText(tempTableContents);
-            }
-        } finally {
-            //We close our cursor so that it does not remain open.
-            cursor.close();
-        }
+    public void deleteAllProducts(){
+        Integer i = getContentResolver().delete(Inventory.CONTENT_URI,null,null);
+        Toast t = Toast.makeText(this,i + " items deleted.",Toast.LENGTH_LONG);
+        t.show();
     }
 
     private void setDatabaseInfo() {
         /**
          * This code sets information into the database
          */
-
-        /*//Initiate the database
-        DbHelper mDbHelper = new DbHelper(this);
-
-        //Create OR Open a Database so we can set data to it
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();*/
 
         //Now let's create the values variable
         ContentValues values = new ContentValues();
@@ -389,25 +377,10 @@ public class MainActivity extends AppCompatActivity implements
             try {
                 //Try to insert the data
                 getContentResolver().insert(Inventory.CONTENT_URI,values);
-                //db.insert(Inventory.TABLE_NAME, null, values);
             } catch (Exception e) {
                 Log.e("INSERT_ERROR",e.getMessage().toString());
             }
-            /*//Update the database info
-            displayDatabaseInfo();
-            refreshDatabaseRows();*/
         }
 
     }
-
-    private void refreshDatabaseRows(){
-        //Clear products array
-        products.clear();
-        //clear listview
-        productList.setAdapter(null);
-        //Load database into listview
-        loadDatabaseRows();
-    }
-
-
 }

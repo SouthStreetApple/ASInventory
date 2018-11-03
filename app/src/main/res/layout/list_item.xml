@@ -68,7 +68,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:text="@string/list_item_sale_button"/>
+            android:text="@string/list_item_sale_button"
+            android:onClick="buttonSale"/>
 
     </RelativeLayout>
 </LinearLayout>

@@ -3,7 +3,7 @@
     <string name="retrieve_database_information">Retrieve Database Information</string>
     <string name="text_view_table_rows">null</string>
     <string name="button_get_rows">Get Rows</string>
-    <string name="textview_enter_product_information">Enter Product Information</string>
+    <string name="textview_enter_product_information">Modify Product Information</string>
     <string name="edittext_enter_product_name">Enter Product Name</string>
     <string name="edittext_enter_product_price">Enter Product Price</string>
     <string name="edittext_enter_product_quantity">Enter Product Quantity</string>
@@ -13,12 +13,20 @@
     <string name="toast_data_missing">Please fill in all fields, phone number is optional.</string>
     <string name="list_item_sale_button">Sale</string>
 
-    <string name="money_sign">$</string>
-    <string name="product_quantity">%1$d Available</string>
+    <string name="money_sign">$%1$s</string>
+    <string name="product_quantity">%1$s Available</string>
     <string name="product_manufacturer">Manuf.:</string>
     <string name="list_item_edit_button">Edit</string>
     <string name="app_details_title">AS - Product Details</string>
     <string name="delete_record">Delete Record</string>
     <string name="empty_view_textview">Looks like the Product DB is empty!</string>
     <string name="empty_view_button">Add a product to begin!</string>
+    <string name="textview_product_information">Detailed Product Information</string>
+    <string name="activity_details_order_from_supplier">Order from Supplier</string>
+    <string name="text_view_product_quantity">Quantity Available:</string>
+    <string name="text_view_product_quantity_increase_amount">Qty. Increase Amount:</string>
+    <string name="text_view_product_name">Product Name:</string>
+    <string name="text_view_product_price">Product Price:</string>
+    <string name="text_view_product_manuf">Manufacturer Name:</string>
+    <string name="text_view_product_manuf_phone">Manufacturer Phone:</string>
 </resources>
